@@ -143,13 +143,13 @@ impl WalletDIcpApi {
         Ok(principal)
     }
 
-    /// Calls a method on another canister with the given arguments and returns the deserialized result.
+ /// Calls a method on another canister with the given arguments and returns the deserialized result.
 /// Retries the call up to 3 times if a transient error occurs.
-pub async fn call_canister<T: CandidType + ArgumentEncoder, R: CandidType + for<'de> Deserialize<'de>>(
-&self,
-canister_id: Principal,
-method: &str,
-args: T,
+pub async fn call_canister<T: CandidType + ArgumentEncoder, R: CandidType + for<'de> Deserialize<'de> + std::fmt::Debug>(
+    &self,
+    canister_id: Principal,
+    method: &str,
+    args: T,
 ) -> Result<R, IcpWalletError> {
     #[cfg(test)]
     {
@@ -187,37 +187,15 @@ args: T,
                     ic_cdk::println!("Successfully decoded response: {:?}", res);
                     return Ok(res);
                 }
-                Err(reject_code) => {
-                    ic_cdk::println!("Call failed with rejection code: {:?}", reject_code);
-                    match reject_code {
-                        RejectCode::SysTransient => {
-                            if attempt >= MAX_RETRIES {
-                                return Err(IcpWalletError::Custom(
-                                    format!(
-                                        "Failed to call canister after {} attempts: SysTransient error",
-                                        MAX_RETRIES
-                                    )
-                                ));
-                            }
-                            ic_cdk::println!("Retrying due to transient error...");
-                            continue;
-                        }
-                        RejectCode::CanisterError => {
-                            return Err(IcpWalletError::Custom(
-                                "Canister error during call".to_string()
-                            ));
-                        }
-                        RejectCode::SysFatal => {
-                            return Err(IcpWalletError::Custom(
-                                "Fatal system error during call".to_string()
-                            ));
-                        }
-                        _ => {
-                            return Err(IcpWalletError::Custom(
-                                format!("Call failed with rejection code: {:?}", reject_code)
-                            ));
-                        }
+                Err(err) => {
+                    ic_cdk::println!("Call failed with error: {:?}", err);
+                    if attempt >= MAX_RETRIES {
+                        return Err(IcpWalletError::Custom(
+                            format!("Failed to call canister after {} attempts: {:?}", MAX_RETRIES, err)
+                        ));
                     }
+                    ic_cdk::println!("Retrying due to error...");
+                    continue;
                 }
             }
         }
@@ -305,7 +283,7 @@ impl IcpWalletApi for WalletDIcpApi {
         if wallet.balance < amount {
             return Err(IcpWalletError::InsufficientFunds);
         }
-
+    
         let tx = IcpTransaction {
             from: from_principal,
             to: to_principal,
@@ -320,7 +298,7 @@ impl IcpWalletApi for WalletDIcpApi {
             signature: signature.to_bytes().to_vec(),
             ..tx
         };
-
+    
         #[cfg(test)]
         {
             // Mock the ledger call for tests
@@ -334,7 +312,7 @@ impl IcpWalletApi for WalletDIcpApi {
                 .map_err(|e| IcpWalletError::Custom(format!("Transfer failed: {:?}", e)))?;
             let (_buf,): (Vec<u8>,) = decode_args(&result).map_err(|e| IcpWalletError::Custom(format!("Decode failed: {:?}", e)))?;
         }
-
+    
         wallet.balance -= amount;
         wallet.transactions.push(signed_tx.clone());
         if let Some(to_wallet) = self.wallets.get_mut(&to_principal) {
@@ -366,7 +344,7 @@ impl IcpWalletApi for WalletDIcpApi {
 mod tests {
     use super::*;
     use candid::Principal;
-    use ic_cdk::call::RejectCode;
+    use ic_cdk::call::CallFailed;
 
     #[tokio::test]
     async fn test_wallet_creation() {
@@ -386,7 +364,7 @@ mod tests {
         walletd.wallets.get_mut(&from_principal).unwrap().balance = 100_000_000;
 
         // Mock the direct canister call
-        let result: Result<Vec<u8>, RejectCode> = Ok(vec![]); // Simulate a successful call with an empty response
+        let result: Result<Vec<u8>, CallFailed> = Ok(vec![]);
         assert!(result.is_ok());
         let result = walletd.transfer(&from, &to, 50_000_000).await;
         assert!(result.is_ok());
