@@ -15,33 +15,33 @@ name = "walletd_monero"
 path = "src/lib.rs"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1.26.0", features = ["full"] }
 
 [dependencies]
-walletd_monero_mnemonic = { path = "../../mnemonics/monero" }
+walletd_monero_mnemonic = { path = "../../mnemonics/monero", version = "0.1" }
 walletd_hd_key = { path = "../../key_manager/hd_key", version = "0.2" }
 walletd_mnemonics_core = { path = "../../mnemonics/core" }
-
+curve25519-dalek = "4.1.1"
+monero-lws = "0.1.0"
 anyhow = "1.0.68"
 async-trait = "0.1.60"
-base58-monero = { version = "1.0.0" }
-# curve25519-dalek = { version = "3.2.1" }
+base58-monero = "1.0.0"
 dalek-ff-group = "0.1.4"
-getrandom = { version = "0.2", features = ["js"] }      # for wasm
-hex = { version = "0.4.2" }
+getrandom = { version = "0.2", features = ["js"] }
+hex = "0.4.2"
 hex-literal = "0.3.2"
-hmac = { version = "0.12.1" }
+hmac = "0.12.1"
 lazy_static = "1.4.0"
-monero-generators = "0.1.1"
+monero-generators = "0.3.0"
 multiexp = "0.2.0"
 num = "0.4.0"
-tiny-keccak = { version = "2.0.2" }
+tiny-keccak = "2.0.2"
 thiserror = "1.0.38"
 rand = "0.8.5"
-reqwest = { version = "0.11.18", features = ["json"] }
-serde = { version = "1.0.148", features = ["derive"] }
-serde-aux = "4.1.2"
-serde_json = "1.0"
+reqwest = { version = "0.11.14", features = ["json"] }
+serde = { version = "1.0.130", features = ["derive"] }
+serde-aux = "4.0.0"
+serde_json = "1.0.130"
 sha2 = { version = "0.10.6", default-features = false }
 subtle = { version = "2", default-features = false }
 zeroize = "1"

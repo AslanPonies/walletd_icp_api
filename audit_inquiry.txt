@@ -1,0 +1,10 @@
+Subject: Audit Inquiry for WalletD SDK
+
+Dear [CertiK/Cyvers Team],
+
+I’m developing WalletD, an open-source Rust-based wallet SDK with ICP integration. We’re seeking a 
+comprehensive security audit for our canister-based implementation. Can you provide details on your 
+audit process, timeline, and pricing?
+
+Best,
+Aslan

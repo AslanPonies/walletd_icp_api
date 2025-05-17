@@ -1,0 +1,13 @@
+(variant { Init = record {
+  minting_account = record { owner = principal 
+"b7zm2-we67f-jspl2-66xlu-ulvvq-4wx6r-s2h3z-prv42-xs2nf-gvm7u-lae"; subaccount = null };
+  initial_balances = vec { record { record { owner = principal 
+"b7zm2-we67f-jspl2-66xlu-ulvvq-4wx6r-s2h3z-prv42-xs2nf-gvm7u-lae"; subaccount = null }; 1000000 : 
+nat } };
+  transfer_fee = 10000 : nat;
+  metadata = vec {};
+  token_name = "Internet Computer";
+  token_symbol = "ICP";
+  archive_options = record { trigger_threshold = 1000 : nat64; num_blocks_to_archive = 1000 : nat64; 
+controller_id = principal "b7zm2-we67f-jspl2-66xlu-ulvvq-4wx6r-s2h3z-prv42-xs2nf-gvm7u-lae" }
+} })

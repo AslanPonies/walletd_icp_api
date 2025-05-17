@@ -19,3 +19,4 @@ walletd_hd_key = { path = "../../key_manager/hd_key", version = "0.2" }
 bdk = { version = "0.28.2" }
 thiserror = "1.0.40"
 tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0.130", features = ["derive"] }

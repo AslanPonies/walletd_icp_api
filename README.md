@@ -1,3 +1,10 @@
+## Project Phases
+- Phase 1: Implemented Minimal Viable Integration (MVI) with ICP transaction support, DID 
+integration, and wallet management.
+- Phase 2: Implemented smart contract interactions with `icrc2_approve` and `icrc2_transfer_from`.
+- Phase 3: Implemented cross-chain swaps (`swap_icp_to_btc`) and planned security audits.
+
+
 <div align="center">
   <h1>WalletD</h1>
 

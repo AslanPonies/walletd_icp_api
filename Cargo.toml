@@ -1,27 +1,25 @@
-[package]
-name = "walletd"
-version = "0.2.0"
-authors = ["The WalletD Team"]
-edition = "2021"
-
-[dependencies]
-tokio = { version = "1", features = ["full"] }
-hedera = "0.28.0"
-anyhow = "1.0"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-bdk = { version = "0.28.2", features = ["all-keys"] }
-hex = { version = "0.4.2" }
-curve25519-dalek = "4.1.3"
-
-
-
 [workspace]
 members = [
+    "walletd_icp_cli",
     "coins/bitcoin",
-    "coins/ethereum",
     "coins/monero",
+    "coins/solana",
+    "coins/ethereum",
     "coins/hedera",
     "key_manager/hd_key",
-    "mnemonics/core"
+    "mnemonics/core",
+    "mnemonics/monero",
+    "rates",
+    "crates/walletd-core",
+    "crates/walletd_icp_api",
 ]
+resolver = "2"
+
+[workspace.dependencies]
+serde = { version = "1.0.130", features = ["derive"] }
+serde_json = "1.0.130"
+
+[patch.crates-io]
+serde = { path = "vendor/serde/serde" }
+serde-aux = { path = "vendor/serde-aux" }
+reqwest = { path = "vendor/reqwest/reqwest" }

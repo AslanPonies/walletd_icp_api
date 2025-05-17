@@ -1,0 +1,125 @@
+Prompt: Generate Rust code for a WalletD crate named walletd_icp_api with full Phase 1-3 integration: 1) Phase 1 - Secure key generation with ed25519-dalek, HD wallets via bip32, ICP token transfers and balance queries via ledger canister (ryjl3-tyaaa-aaaaa-aaaba-cai); 2) Phase 2 - Canister smart contract interaction; 3) Phase 3 - Cross-chain interoperability with Bitcoin. Use walletd-core traits (BlockchainWallet, CryptoWallet) and ic-agent.
+Response: Certainly. Below is an example of how you might structure the `walletd_icp_api` crate in Rust, incorporating the features you've requested. This example will outline the key components for each phase:
+
+### Cargo.toml
+
+```toml
+[package]
+name = "walletd_icp_api"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ed25519-dalek = "1.0"
+bip32 = "0.4"
+ic-agent = "0.22"
+ic-types = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
+walletd-core = "0.1.0" # Assuming this exists with the necessary traits
+anyhow = "1.0"
+```
+
+### src/lib.rs
+
+```rust
+use ed25519_dalek::Keypair;
+use bip32::{DerivationPath, XPrv};
+use ic_agent::agent::Agent;
+use ic_agent::identity::BasicIdentity;
+use walletd_core::{BlockchainWallet, CryptoWallet};
+use std::str::FromStr;
+
+mod icp_ledger;
+mod icp_canister;
+mod btc_interop;
+
+/// Represents a wallet for the Internet Computer Protocol (ICP)
+pub struct ICPWallet {
+    agent: Agent,
+    keypair: Keypair,
+}
+
+impl ICPWallet {
+    pub fn new(identity: BasicIdentity) -> Self {
+        let agent = Agent::builder()
+            .with_identity(identity)
+            .build()
+            .expect("Failed to build agent");
+        let keypair = identity.get_key_pair();
+        ICPWallet { agent, keypair }
+    }
+}
+
+impl BlockchainWallet for ICPWallet {
+    // Implement methods like transfer, get_balance, etc.
+    fn transfer(&mut self, to: &str, amount: u64) -> Result<(), anyhow::Error> {
+        icp_ledger::transfer(&self.agent, &self.keypair, to, amount)
+    }
+
+    fn get_balance(&self) -> Result<u64, anyhow::Error> {
+        icp_ledger::balance(&self.agent, &self.keypair)
+    }
+}
+
+impl CryptoWallet for ICPWallet {
+    fn generate_key() -> Result<Keypair, anyhow::Error> {
+        Ok(Keypair::generate(&mut rand::thread_rng()))
+    }
+}
+
+/// Module for handling ICP ledger interactions
+mod icp_ledger {
+    use super::*;
+    
+    pub fn transfer(agent: &Agent, keypair: &Keypair, to: &str, amount: u64) -> Result<(), anyhow::Error> {
+        // Implementation for transferring ICP tokens
+        // This is a placeholder
+        Ok(())
+    }
+
+    pub fn balance(agent: &Agent, keypair: &Keypair) -> Result<u64, anyhow::Error> {
+        // Implementation for querying balance
+        // This is a placeholder
+        Ok(0)
+    }
+}
+
+/// Module for interacting with canister smart contracts
+mod icp_canister {
+    use super::*;
+    
+    pub fn call_canister(agent: &Agent, canister_id: &str, method: &str, args: Vec<u8>) -> Result<Vec<u8>, anyhow::Error> {
+        // Placeholder for canister interaction
+        Ok(vec![])
+    }
+}
+
+/// Module for Bitcoin interoperability
+mod btc_interop {
+    use super::*;
+
+    pub fn btc_to_icp_transfer(icp_wallet: &ICPWallet, btc_amount: f64) -> Result<(), anyhow::Error> {
+        // Placeholder for Bitcoin to ICP transfer logic
+        Ok(())
+    }
+}
+
+/// Function to derive a hierarchical deterministic key
+pub fn derive_hd_key(seed: &[u8], derivation_path: &str) -> Result<XPrv, anyhow::Error> {
+    let path = DerivationPath::from_str(derivation_path)?;
+    let master_key = XPrv::new(&seed).expect("Failed to create master key");
+    master_key.derive_priv(&path).map_err(|_| anyhow::anyhow!("Failed to derive key"))
+}
+```
+
+### Explanation:
+
+1. **Phase 1**: 
+   - `ICPWallet` uses `ed25519_dalek` for key generation and implements `BlockchainWallet` and `CryptoWallet` traits from `walletd-core`. 
+   - The `icp_ledger` module provides functions for token transfers and balance queries, which would interact with the ICP ledger canister.
+
+2. **Phase 2**: 
+   - `icp_canister` module with a `call_canister` function for
+
