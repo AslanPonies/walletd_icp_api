@@ -1,8 +1,3 @@
-{
-  "incoming_source": {
-    "Path": "/var/folders/dk/fg88pbfn511c394p5cjbh6b80000gp/T/ic-https-outcalls-adapter-socket.13114.1746535630"
-  },
-  "logger": {
-    "level": "error"
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:299db99c3cff2f56b03437b2620d06e36cfceacd8e64f9171be7efe505c002da
+size 183
