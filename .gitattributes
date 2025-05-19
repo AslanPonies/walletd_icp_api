@@ -1,3 +1,5 @@
 *.zip filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
 dfx-x86_64-apple-darwin/dfx filter=lfs diff=lfs merge=lfs -text
+node_modules/thread-stream/test/dir[[:space:]]with[[:space:]]spaces/test-package.zip filter=lfs diff=lfs merge=lfs -text
+node_modules/thread-stream/test/ts-commonjs-default-export.zip filter=lfs diff=lfs merge=lfs -text
